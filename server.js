@@ -1,15 +1,16 @@
 require("dotenv").config
 const express = require("express");
-const bodyParser = require("body-parser")
-const databaseConnection = require("./config/db")
-const userRoute = require("./routes/usersRoute")
+const databaseConnection = require("./config/db");
+const userRoute = require("./routes/usersRoute");
+const authRoute = require("./routes/authRoute");
 
 const app = express();
 const port = process.env.PORT || 7000
 
 databaseConnection()
-app.use(express.json())
-app.use("/users",userRoute)
+app.use(express.json());
+app.use("/register",userRoute);
+app.use("/login",authRoute)
 
 app.get("/health",(req,res)=>{
     res.json({

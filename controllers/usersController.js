@@ -1,47 +1,55 @@
+require("dotenv").config()
 const User = require("../models/User")
 const bcrypt = require("bcrypt")
-const salt = 10;
+const jwt = require("jsonwebtoken")
 
 const userRegistration = async (req, res) => {
-
     try {
-        const { name, email, phone, password } = req.body
+        const { name, email, phone, password } = req.body;
 
-        // checks every field is filled or not
         if (!name || !email || !phone || !password) {
-            return res.status(400).json({ errorMessage: "Bad Request" })
+            return res.status(500).json({ errorMessage: "Bad Request" })
         }
 
-        // checks if user already exist
-        const isUserExist = await User.findOne({$or:[{email},{phone}]})
+        const isUserExist = await User.findOne({ $or: [{ name }, { email }] });
 
         if (isUserExist) {
             switch (true) {
                 case isUserExist.email === email:
-                    return res.status(409).json({errorMessage:"Email already exists"});
-                    break;
+                    return res.status(409).json({ message: "email already exist" });
                 case isUserExist.phone === phone:
-                return res.status(409).json({errorMessage:"Phone number already exists"})
+                    return res.status(409).json({ message: "phone number already exist" });
             }
         }
 
-        // hashing the password
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, 10)
 
-        const createdUser = new User({ name, email, phone, password: hashedPassword })
+        const creatingUser = new User({ name, email, phone, password: hashedPassword })
 
         try {
-            createdUser.save()
-            return res.status(200).json({message:"User registered sucessfully"})
+            const savedUser = creatingUser.save()
+            const payLoad = await {
+                userId: savedUser._id,
+                email: savedUser.email
+            }
+            const secretKey = process.env.SECRET_KEY
+
+            const token = jwt.sign(payLoad, secretKey)
+
+            res.status(200).json({
+                message: "User Registered Sucessfully",
+                token: token
+            })
+
         } catch (error) {
-            return res.json({message:"Error in user registration"})
+            res.status(400).json({ errorMessage: "Error in user registration" })
         }
 
+
     } catch (error) {
-        console.log(error);
         res.status(500).json({ errorMessage: "Internal server error" })
     }
-
 }
 
 module.exports = userRegistration;
+
