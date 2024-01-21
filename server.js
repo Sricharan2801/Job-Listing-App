@@ -1,16 +1,24 @@
 require("dotenv").config
 const express = require("express");
+const cookieParser = require("cookie-parser")
 const databaseConnection = require("./config/db");
+// routes
 const userRoute = require("./routes/usersRoute");
 const authRoute = require("./routes/authRoute");
+const jobsRoute = require("./routes/jobsRoute");
+// middleWares
+const verifyToken = require("./middlewares/userAuthorization")
+const  {routeNotFound,errorHandler} = require("./middlewares/errorHandling")
 
 const app = express();
 const port = process.env.PORT || 7000
 
-databaseConnection()
+databaseConnection();
 app.use(express.json());
+app.use(cookieParser());
 app.use("/register",userRoute);
-app.use("/login",authRoute)
+app.use("/login",authRoute);
+app.use("/createJob",jobsRoute);
 
 app.get("/health",(req,res)=>{
     res.json({
@@ -19,6 +27,9 @@ app.get("/health",(req,res)=>{
         time:new Date()
     })
 })
+
+app.use(routeNotFound);
+app.use(errorHandler)
 
 app.listen(port,(err)=>{
     if(!err){

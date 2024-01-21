@@ -18,8 +18,10 @@ const Login = async (req, res) => {
                     email: isUserExist.email
                 }
                 const secretKey = process.env.SECRET_KEY
-                const token = jwt.sign(payLoad, secretKey)
-                res.status(200).json({
+                const token = jwt.sign(payLoad, secretKey,{expiresIn:"2h"})
+                res.cookie("access_token", token, {
+                    httpOnly: true
+                }).status(200).json({
                     message: "Login Sucessful",
                     token: token
                 })

@@ -34,9 +34,11 @@ const userRegistration = async (req, res) => {
             }
             const secretKey = process.env.SECRET_KEY
 
-            const token = jwt.sign(payLoad, secretKey)
+            const token = jwt.sign(payLoad, secretKey,{expiresIn:"2h"})
 
-            res.status(200).json({
+            res.cookie("access_token", token, {
+                httpOnly: true
+            }).status(200).json({
                 message: "User Registered Sucessfully",
                 token: token
             })
