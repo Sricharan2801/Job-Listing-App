@@ -1,7 +1,7 @@
 const express = require("express");
-const createJob = require("../controllers/jobsController")
+const updateUser = require("../controllers/jobsUpdate")
 const router = express.Router();
 
-router.post("/",createJob)
+router.post("/:userId",updateUser);
 
 module.exports = router;
