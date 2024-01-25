@@ -1,6 +1,6 @@
 const Jobs = require("../models/Jobs");
 
-const createJob = async(req, res) => {
+const createJob = async (req, res) => {
     try {
         const {
             companyName,
@@ -13,7 +13,9 @@ const createJob = async(req, res) => {
             jobDescription,
             aboutCompany,
             skillsRequired,
-            information } = req.body
+            information,
+
+        } = req.body
 
         if (!companyName || !addLogoUrl || !jobPosition || !monthlySalary ||
             !jobType || !remoteOrOffice || !jobDescription || !aboutCompany ||
@@ -32,15 +34,16 @@ const createJob = async(req, res) => {
             jobDescription,
             aboutCompany,
             skillsRequired,
-            information
+            information,
+            refUserId: req.body.userId,
         })
 
         try {
-           await jobCreated.save()
-            res.status(200).json({message:"Job Created Sucessfully"})
+            await jobCreated.save()
+            res.status(200).json({ message: "Job Created Sucessfully" })
         } catch (error) {
             console.log(error);
-            res.status(409).json({errorMessage:"Error in creating job"})
+            res.status(409).json({ errorMessage: "Error in creating job" })
         }
 
 

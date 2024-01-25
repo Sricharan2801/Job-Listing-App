@@ -38,13 +38,17 @@ const jobsSchema = new mongoose.Schema({
         required: true
     },
     skillsRequired: {
-        type: String,
+        type: Array,
         required: true
     },
     information: {
         type: String,
         required: true
     },
+    refUserId : {
+        type: mongoose.Types.ObjectId,
+        required:true
+    }
 })
 
 const Jobs = mongoose.model("Jobs", jobsSchema);

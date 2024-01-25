@@ -11,24 +11,19 @@ const userRegistration = async (req, res) => {
             return res.status(500).json({ errorMessage: "Bad Request" })
         }
 
-        const isUserExist = await User.findOne({ $or: [{ name }, { email }] });
+        const isEmailExist = await User.findOne({email:email});
+        const isPhoneExist = await User.findOne({phone:phone});
 
-        if (isUserExist) {
-            switch (true) {
-                case isUserExist.email === email:
-                    return res.status(409).json({ message: "email already exist" });
-                case isUserExist.phone === phone:
-                    return res.status(409).json({ message: "phone number already exist" });
-            }
-        }
+        if(isEmailExist) return res.status(409).json({errorMessage:"Email already exist"});
+        if(isPhoneExist) return res.status(409).json({errorMessage:"Phone Number already exist"})
 
         const hashedPassword = await bcrypt.hash(password, 10)
 
         const creatingUser = new User({ name, email, phone, password: hashedPassword })
 
         try {
-            const savedUser = creatingUser.save()
-            const payLoad = await {
+            const savedUser = await creatingUser.save()
+            const payLoad =  {
                 userId: savedUser._id,
                 email: savedUser.email
             }
@@ -44,11 +39,13 @@ const userRegistration = async (req, res) => {
             })
 
         } catch (error) {
+            console.log(error);
             res.status(400).json({ errorMessage: "Error in user registration" })
         }
 
 
     } catch (error) {
+        console.log(error);
         res.status(500).json({ errorMessage: "Internal server error" })
     }
 }

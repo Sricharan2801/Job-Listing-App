@@ -16,7 +16,7 @@ const updateUser = async (req, res) => {
             information
         } = req.body;
 
-        const userId = req.params.userId;
+        const jobId = req.params.jobId;
 
         if (!companyName || !addLogoUrl || !jobPosition || !monthlySalary ||
             !jobType || !remoteOrOffice || !jobDescription || !aboutCompany ||
@@ -25,7 +25,7 @@ const updateUser = async (req, res) => {
         }
 
         try {
-            await Jobs.updateOne({ _id: userId }, {
+            await Jobs.updateOne({ _id: jobId }, {
                 $set: {
                     companyName,
                     addLogoUrl,
@@ -37,17 +37,17 @@ const updateUser = async (req, res) => {
                     jobDescription,
                     aboutCompany,
                     skillsRequired,
-                    information
+                    information,
                 }
             })
 
             res.status(200).json({
-                message:"User details updated sucessfully..."
+                message: "User details updated sucessfully..."
             })
         } catch (error) {
-              res.status(400).json({
-                errorMessage:"Error in updating user details"
-              })
+            res.status(400).json({
+                errorMessage: "Error in updating user details"
+            })
         }
 
     } catch (error) {

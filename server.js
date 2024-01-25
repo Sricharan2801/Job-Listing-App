@@ -7,6 +7,7 @@ const userRegistrationRoute = require("./routes/userRegistrationRoute");
 const userAuthRoute = require("./routes/userAuthRoute");
 const jobsPostingRoute = require("./routes/jobsPostingRoute");
 const jobsUpdateRoute = require("./routes/jobsUpdateRoute");
+const jobDetailsRoute = require("./routes/jobDetailsRoute");
 // middleWares
 const verifyToken = require("./middlewares/userAuthorization")
 const  {routeNotFound,errorHandler} = require("./middlewares/errorHandling")
@@ -19,8 +20,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api/v1/register",userRegistrationRoute);
 app.use("/api/v1/login",userAuthRoute);
-app.use("/api/v1/createJob",jobsPostingRoute);
-app.use("/api/v1/updateUser",jobsUpdateRoute);
+app.use("/api/v1/createJob",verifyToken,jobsPostingRoute);
+app.use("/api/v1/updateJob",verifyToken,jobsUpdateRoute);
+app.use("/api/v1/jobDetails",jobDetailsRoute);
 
 app.get("/health",(req,res)=>{
     res.json({
